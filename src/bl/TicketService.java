@@ -11,8 +11,6 @@ import dl.TicketDAO;
 
 public class TicketService {
     private TicketDAO ticketDAO = new TicketDAO();
-    private static final String CSV = "CSV";
-    private static final String JSON = "JSON";
 
     public boolean addTicket(Ticket newTicket) {
         ArrayList<Ticket> tickets = ticketDAO.getTicketsFromDB();
@@ -31,13 +29,9 @@ public class TicketService {
     }
 
     public void export(String tipExport) throws IOException {
-        Exporter exporter = null;
         ArrayList<Ticket> tickets = getTickets();
-        if (CSV.equals(tipExport)) {
-            exporter = (Exporter) new CsvExporter();
-        } else if (JSON.equals(tipExport)) {
-            exporter = new JsonExporter();
-        }
+        ExporterFactory exporterFactory = new ExporterFactory();
+        Exporter exporter = exporterFactory.createExporter(tipExport);
         exporter.exportTickets(tickets);
     }
 }
